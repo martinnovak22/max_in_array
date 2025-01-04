@@ -1,27 +1,29 @@
+# Třída RAM reprezentuje operační paměť
 class RAM:
-    # Třída RAM reprezentuje operační paměť
+    # Inicializace paměti o velikosti 256 s výchozími nulami
     def __init__(self, size=256):
-        # Inicializace paměti o velikosti 'size' s výchozími nulami
         self.memory = [0] * size
 
+    # Načtení hodnoty do paměti na adresu
     def load(self, address, value):
-        # Načtení hodnoty 'value' do paměti na adresu 'address'
         self.memory[address] = value
 
+    # Čtení hodnoty z paměti na adrese
     def read(self, address):
-        # Čtení hodnoty z paměti na adrese 'address'
         return self.memory[address]
 
+# Třída CPU simuluje jednoduchý procesor
 class CPU:
-    # Třída CPU simuluje jednoduchý procesor
+    # Připojení paměti RAM k CPU
     def __init__(self, ram):
-        # Připojení paměti RAM k CPU
         self.ram = ram
-        self.accumulator = 0  # Akumulátor slouží k uchování mezivýsledků
-        self.pc = 0  # Programový čítač určuje aktuální instrukci
+        # Akumulátor slouží k uchování mezivýsledků
+        self.accumulator = 0
+        # Programový čítač určuje aktuální instrukci
+        self.pc = 0 
 
+    # Metoda pro vykonávání instrukcí
     def execute(self, instructions):
-        # Metoda pro vykonávání instrukcí
         while self.pc < len(instructions):
             instr, *args = instructions[self.pc]  # Načtení aktuální instrukce a argumentů
             if instr == "LOAD":
@@ -31,36 +33,39 @@ class CPU:
             elif instr == "JUMP":
                 self.jump(*args)  # Skok na jinou instrukci
             elif instr == "NOP":
-                self.nop()  # Žádná operace
-            self.pc += 1  # Posun na další instrukci
+                self.nop()
+            self.pc += 1
 
+    # Načtení hodnoty z paměti na adresu do akumulátoru
     def load(self, address):
-        # Načtení hodnoty z paměti na adresu 'address' do akumulátoru
         self.accumulator = self.ram.read(address)
 
+    # Porovnání hodnoty na adrese s akumulátorem
     def compare(self, address):
-        # Porovnání hodnoty na adrese 'address' s akumulátorem
         value = self.ram.read(address)
         if value > self.accumulator:
-            self.accumulator = value  # Pokud je hodnota větší, aktualizuje se akumulátor
+            self.accumulator = value
 
+    # Skok na zadanou instrukci
     def jump(self, target_pc):
-        # Skok na zadanou instrukci
-        self.pc = target_pc - 1  # Posun na novou adresu
+        self.pc = target_pc - 1 
 
+    # NOP (No Operation) - žádná operace
     def nop(self):
-        # NOP (No Operation) - žádná operace
         pass
 
+# Inicializace paměti RAM a CPU
 if __name__ == "__main__":
-    # Inicializace paměti RAM a CPU
     ram = RAM(size=256)
 
-    # Načtení datového pole do paměti RAM
-    data = [3, 1, 4, 10, 5, 9]  # Pole hodnot, které budeme zpracovávat
-    start_address = 0  # Počáteční adresa v paměti pro uložení dat
+    # Datového pole
+    data = [3, 1, 4, 10, 5, 9]
+
+    start_address = 0 
+
+    # Načtení hodnot do RAM
     for i, value in enumerate(data):
-        ram.load(start_address + i, value)  # Načtení hodnot do RAM
+        ram.load(start_address + i, value)  
 
     # Vytvoření instrukcí pro nalezení maxima v poli
     instructions = [("LOAD", start_address)]  # První instrukce: načtení první hodnoty
