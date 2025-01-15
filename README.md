@@ -46,6 +46,3 @@ Program načte pole čísel od uživatele, uloží je do paměti RAM a poté CPU
 
 5. **Výsledek**:
    - Maximální hodnota z pole se zobrazí v konzoli.
-
-### Ukázka výstupu
-Příklad zadání:

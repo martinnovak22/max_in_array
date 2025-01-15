@@ -54,24 +54,25 @@ class CPU:
     def nop(self):
         pass
 
-# Inicializace paměti RAM a CPU
+# Inicializace paměti RAM a CPU a načtení dat
 if __name__ == "__main__":
     ram = RAM(size=256)
 
-    # Datového pole
-    data = [3, 1, 4, 10, 5, 9]
+    # Načtení pole čísel od uživatele
+    user_input = input("Zadejte pole čísel oddělených čárkou (např. 3,1,4,10,5,9): ")
+    data = list(map(int, user_input.split(',')))  # Převod na seznam celých čísel
 
-    start_address = 0 
+    start_address = 0
 
     # Načtení hodnot do RAM
     for i, value in enumerate(data):
-        ram.load(start_address + i, value)  
+        ram.load(start_address + i, value)
 
     # Vytvoření instrukcí pro nalezení maxima v poli
-    instructions = [("LOAD", start_address)]  # První instrukce: načtení první hodnoty
+    instructions = [("LOAD", start_address)]
     for i in range(1, len(data)):
-        instructions.append(("COMPARE", start_address + i))  # Přidání instrukcí COMPARE
-    instructions.append(("NOP",))  # Instrukce NOP pro ukončení programu
+        instructions.append(("COMPARE", start_address + i))
+    instructions.append(("NOP",))
 
     # Inicializace CPU a vykonání instrukcí
     cpu = CPU(ram)
