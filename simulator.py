@@ -29,6 +29,8 @@ class CPU:
                 self.jump_if(*args)
             elif instr == "MOV":
                 self.mov(*args)
+            elif instr == "STORE":
+                self.store(*args)
             elif instr == "NOP":
                 self.nop()
             
@@ -49,6 +51,9 @@ class CPU:
     def mov(self, reg, value):
         self.registers[reg] = value
 
+    def store(self, reg, address):
+        self.ram.load(address, self.registers[reg])
+
     def nop(self):
         pass
 
@@ -57,7 +62,7 @@ if __name__ == "__main__":
     ram = RAM(size=256)
 
     # Načtení pole čísel do paměti
-    user_input = input("Zadejte pole pěti čísel oddělených čárkou (např. 3,1,4,10,5): ")
+    user_input = input("Zadejte pole čísel oddělených čárkou (např. 3,1,4,10,5): ")
     data = list(map(int, user_input.split(',')))
     start_address = 0
 
@@ -71,16 +76,14 @@ if __name__ == "__main__":
         ("COMPARE", start_address + 2),    # Porovnej s třetí hodnotou
         ("COMPARE", start_address + 3),    # Porovnej s čtvrtou hodnotou
         ("COMPARE", start_address + 4),    # Porovnej s pátou hodnotou
-        ("MOV", 0, 10),                    # Ulož hodnotu 10 do registru R0
-        ("JUMP_IF", "self.accumulator < self.registers[0]", 10),  # Pokud akumulátor < R0, skoč na reset
-        ("STORE", 0, start_address + 5),   # Ulož hodnotu z R0 do paměti (např. nový výsledek)
-        ("NOP",),                          # Konec programu
-        # Pokud je akumulátor < R0, provede se toto:
-        ("MOV", 1, 0),                     # Ulož hodnotu 0 do registru R1 (reset hodnoty)
-        ("STORE", 1, start_address + 6),   # Ulož hodnotu 0 do paměti na novou adresu
-        ("NOP",)                           # Konec
+        ("MOV", 0, 0),                     # Inicializuj registr R0 na 0
+        ("JUMP_IF", "self.accumulator > 0", 8),  # Pokud akumulátor > 0, pokračuj na ukládání
+        ("MOV", 1, 0),                     # Ulož hodnotu 0 do registru R1
+        ("STORE", 1, start_address + 6),   # Ulož hodnotu 0 do paměti
+        ("NOP",),                          # Konec při splnění podmínky
+        ("STORE", 0, start_address + 5),   # Ulož maximum do paměti
+        ("NOP",)                           # Konec programu
     ]
-
 
     # Spuštění instrukcí
     cpu = CPU(ram)
